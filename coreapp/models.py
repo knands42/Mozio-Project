@@ -26,7 +26,7 @@ class ServiceArea(models.Model):
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE, related_name='service_areas')
     name = models.CharField(max_length=255)
     price = models.BigIntegerField() # big integer to avoid operation with decimal values (Just divide by 10 when showing to the client)
-    area = models.MultiPolygonField(geography=True)
+    area = models.PolygonField(geography=True)
 
     class Meta:
         db_table = 'service_areas'

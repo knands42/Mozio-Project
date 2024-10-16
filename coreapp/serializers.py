@@ -22,6 +22,15 @@ class ProviderSerializer(serializers.ModelSerializer):
 
 
 class ServiceAreaSerializer(serializers.ModelSerializer):
+    def validate_area(self, value):
+        """
+        Validate that the input consists of at least three coordinate points to form a valid polygon.
+        """
+        if len(value) < 3:
+            raise serializers.ValidationError("A valid polygon must have at least three coordinates.")
+        return value
+
+    
     class Meta:
         model = ServiceArea
         fields = '__all__'
