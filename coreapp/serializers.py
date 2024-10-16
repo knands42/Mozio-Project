@@ -17,8 +17,8 @@ class ProviderSerializer(serializers.ModelSerializer):
     def validate_phone_number(self, value):
         if not value.isdigit():
             raise serializers.ValidationError("Phone number must contain only digits.")
-        if len(value) != 12:
-            raise serializers.ValidationError("Phone number must be 10 digits long.")
+        
+        return value
 
 
 class ServiceAreaSerializer(serializers.ModelSerializer):
