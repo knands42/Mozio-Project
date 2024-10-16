@@ -1,0 +1,36 @@
+services:
+  postgres:
+    image: postgis/postgis:16-master
+    container_name: mozio-project-postgres
+    ports:
+      - 5433:5432
+    networks:
+      - mozio-project-network
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mozio_db
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U your_user"]
+      interval: 10s
+      retries: 5
+
+  postgres-test:
+    image: postgis/postgis:16-master
+    container_name: mozio-project-postgres-test
+    ports:
+      - 5434:5432
+    networks:
+      - mozio-project-network
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=mozio_db_test
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U your_user"]
+      interval: 10s
+      retries: 5
+
+networks:
+  mozio-project-network:
+    driver: bridge
