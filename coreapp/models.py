@@ -22,14 +22,14 @@ class ServiceArea(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     provider = models.ForeignKey(Provider, on_delete=models.CASCADE)
     name = models.CharField(max_length=255)
-    price = models.DecimalField(max_digits=10, decimal_places=2)
-    area = models.PolygonField()
+    price = models.BigIntegerField() # big integer to avoid operation with decimal values (Just divide by 10 when showing to the client)
+    localtion = models.PolygonField()
 
     class Meta:
         db_table = 'service_areas'
         indexes = [
             models.Index(fields=['name']),
-            models.Index(fields=['area']),
+            models.Index(fields=['localtion']),
         ]
 
 

@@ -1,3 +1,5 @@
 Django==5.1.2
 djangorestframework==5.1.2
 psycopg2==2.9.9
+drf-yasg==1.21.7
+djangorestframework-gis==5.1.2
