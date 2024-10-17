@@ -15,6 +15,7 @@ docker-up:
 
 # Apply database migrations
 migrate:
+	$(DJANGO_MANAGE) makemigrations
 	$(DJANGO_MANAGE) migrate
 
 # Load initial data (seed)

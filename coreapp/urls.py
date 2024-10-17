@@ -5,7 +5,6 @@ from .views import ProviderViewSet, ServiceAreaViewSet, LocateAreaViewSet
 router = DefaultRouter()
 router.register(r'providers', ProviderViewSet)
 router.register(r'service-areas', ServiceAreaViewSet)
-# router.register(r'service-areas/polygons', LocateAreaViewSet)
 
 urlpatterns = [
     path('', include(router.urls)),

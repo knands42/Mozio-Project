@@ -135,3 +135,10 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 SWAGGER_SETTINGS = {
    'DEFAULT_INFO': 'mozio_project_django.urls',
 }
+
+# Others
+
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    'PAGE_SIZE': 100
+}

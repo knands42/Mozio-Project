@@ -6,11 +6,38 @@ from .models import Provider, ServiceArea
 from .serializers import ProviderSerializer, ServiceAreaSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from rest_framework.pagination import PageNumberPagination
+
+
+class StandardResultsSetPagination(PageNumberPagination):
+    page_size = 10
+    page_size_query_param = 'page_size'
+    max_page_size = 20
 
 
 class ProviderViewSet(viewsets.ModelViewSet):
     queryset = Provider.objects.all()
     serializer_class = ProviderSerializer
+    pagination_class = StandardResultsSetPagination
+
+    @swagger_auto_schema(
+        operation_summary="List all providers",
+        operation_description="Endpoint to list all providers.",
+        manual_parameters=[
+            openapi.Parameter(
+                'page', openapi.IN_QUERY, description="Page number", type=openapi.TYPE_INTEGER, required=False, default=1
+            ),
+            openapi.Parameter(
+                'page_size', openapi.IN_QUERY, description="Number of items per page", type=openapi.TYPE_INTEGER, required=False, default=10
+            ),
+        ],
+        responses={
+            200: ProviderSerializer,
+            400: 'Bad Request',
+        },
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
     
     @swagger_auto_schema(
         operation_summary="Create a new provider",
@@ -61,7 +88,27 @@ class ProviderViewSet(viewsets.ModelViewSet):
 class ServiceAreaViewSet(viewsets.ModelViewSet):
     queryset = ServiceArea.objects.all()
     serializer_class = ServiceAreaSerializer
-    
+    pagination_class = StandardResultsSetPagination
+
+    @swagger_auto_schema(
+        operation_summary="List all service areas",
+        operation_description="Endpoint to list all service areas.",
+        manual_parameters=[
+            openapi.Parameter(
+                'page', openapi.IN_QUERY, description="Page number", type=openapi.TYPE_INTEGER, required=False, default=1
+            ),
+            openapi.Parameter(
+                'page_size', openapi.IN_QUERY, description="Number of items per page", type=openapi.TYPE_INTEGER, required=False, default=10
+            ),
+        ],
+        responses={
+            200: ProviderSerializer,
+            400: 'Bad Request',
+        },
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
     @swagger_auto_schema(
         request_body=openapi.Schema(
             type=openapi.TYPE_OBJECT,
@@ -75,19 +122,38 @@ class ServiceAreaViewSet(viewsets.ModelViewSet):
                         type=openapi.TYPE_ARRAY,
                         items=openapi.Items(type=openapi.TYPE_NUMBER)
                     ),
-                    description='Coordinates of the polygon defining the service area'
+                    description='Coordinates of the polygon defining the service area, the longitude and latitude of each point respectively'
                 ),
             },
             example={
-                "provider": "81ead2ad-9b4e-4604-8049-043b2a9406a2",
-                "name": "Downtown Service Area",
+                "provider": "03443be0-971f-4ab6-8823-aefc199b3cdf",
+                "name": "Curitiba",
                 "price": 10000,
                 "area": [
-                    [-80.190262, 25.774252],
-                    [-80.190262, 26.774252],
-                    [-81.190262, 26.774252],
-                    [-81.190262, 25.774252],
-                    [-80.190262, 25.774252]
+                    [
+                        -49.2267109367212,
+                        -25.35657119275144
+                    ],
+                    [
+                        -49.17040040142484,
+                        -25.406785492872817
+                    ],
+                    [
+                        -49.20989090669761,
+                        -25.495930406827767
+                    ],
+                    [
+                        -49.328728075342525,
+                        -25.477776612809436
+                    ],
+                    [
+                        -49.31410196227854,
+                        -25.37738623217101
+                    ],
+                    [
+                        -49.2267109367212,
+                        -25.35657119275144
+                    ]
                 ]
             }
         )
@@ -121,16 +187,93 @@ class ServiceAreaViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+    @swagger_auto_schema(
+        request_body=openapi.Schema(
+            type=openapi.TYPE_OBJECT,
+            properties={
+                'provider': openapi.Schema(type=openapi.TYPE_STRING, description='UUID of the provider'),
+                'name': openapi.Schema(type=openapi.TYPE_STRING, description='Name of the service area'),
+                'price': openapi.Schema(type=openapi.TYPE_INTEGER, description='Price in integer (divide by 10 to show to client)'),
+                'area': openapi.Schema(
+                    type=openapi.TYPE_ARRAY,
+                    items=openapi.Items(
+                        type=openapi.TYPE_ARRAY,
+                        items=openapi.Items(type=openapi.TYPE_NUMBER)
+                    ),
+                    description='Coordinates of the polygon defining the service area, the longitude and latitude of each point respectively'
+                ),
+            },
+            example={
+                "provider": "03443be0-971f-4ab6-8823-aefc199b3cdf",
+                "name": "Curitiba - Updated",
+                "price": 10000,
+                "area": [
+                    [
+                        -49.2267109367212,
+                        -25.35657119275144
+                    ],
+                    [
+                        -49.17040040142484,
+                        -25.406785492872817
+                    ],
+                    [
+                        -49.20989090669761,
+                        -25.495930406827767
+                    ],
+                    [
+                        -49.328728075342525,
+                        -25.477776612809436
+                    ],
+                    [
+                        -49.31410196227854,
+                        -25.37738623217101
+                    ],
+                    [
+                        -49.2267109367212,
+                        -25.35657119275144
+                    ]
+                ]
+            }
+        )
+    )
+    def update(self, request, *args, **kwargs):
+        data = request.data
+        instance = self.get_object()
+        
+        try:
+            # Convert area coordinates to a MultiPolygon
+            poligon = Polygon(data['area'])
+            
+            # Get the provider
+            provider = Provider.objects.get(id=data['provider'])
+            
+            # Update the ServiceArea
+            instance.name = data['name']
+            instance.price = data['price']
+            instance.area = poligon
+            instance.provider = provider
+            instance.save()
+            
+            serializer = self.get_serializer(instance)
+            return Response(serializer.data)
+        except Provider.DoesNotExist:
+            return Response({'error': 'Provider not found'}, status=status.HTTP_404_NOT_FOUND)
+        except KeyError as e:
+            return Response({'error': f'Missing required field: {str(e)}'}, status=status.HTTP_400_BAD_REQUEST)
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class LocateAreaViewSet(APIView):
     
     @swagger_auto_schema(
         manual_parameters=[
             openapi.Parameter(
-                'lat', openapi.IN_QUERY, description="Latitude of the point", type=openapi.TYPE_NUMBER, required=True
+                'lat', openapi.IN_QUERY, description="Latitude of the point", type=openapi.TYPE_NUMBER, required=True, default="-25.439479625088097"
             ),
             openapi.Parameter(
-                'lng', openapi.IN_QUERY, description="Longitude of the point", type=openapi.TYPE_NUMBER, required=True
+                'lng', openapi.IN_QUERY, description="Longitude of the point", type=openapi.TYPE_NUMBER, required=True, default="-49.258157079808775"
             ),
         ],
         responses={
@@ -151,11 +294,10 @@ class LocateAreaViewSet(APIView):
         operation_summary="List Service Areas by Lat/Lng",
         operation_description="Returns a list of service areas that contain the provided latitude and longitude point. The response includes the name of the service area, the provider name, and the price."
     )
-    def list(self, request, *args, **kwargs):
+    def get(self, request, *args, **kwargs):
         lat = float(request.query_params.get('lat'))
         lng = float(request.query_params.get('lng'))
         point = Point(lng, lat)
-        print(f"sonic {point}")
         
         service_areas = ServiceArea.objects.filter(area__contains=point)
 

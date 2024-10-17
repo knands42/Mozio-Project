@@ -1,4 +1,5 @@
 from django.contrib.gis.db import models
+from django.contrib.postgres.indexes import GistIndex
 import uuid
 
 class Provider(models.Model):
@@ -32,7 +33,7 @@ class ServiceArea(models.Model):
         db_table = 'service_areas'
         indexes = [
             models.Index(fields=['name']),
-            models.Index(fields=['area']),
+            GistIndex(fields=['area'])
         ]
 
 
