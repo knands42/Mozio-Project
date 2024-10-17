@@ -1,10 +1,10 @@
-# Mozio Project
+# GeoBound
 
-This is a Django application for Mozio with geolocation capabilities, using PostgreSQL and PostGIS.
+This project consists of a Django application with geolocation capabilities, using PostgreSQL and PostGIS that allows providers to verify all service areas registered near a given location (lat and lng).
 
 ## Requirements
 
-Ensure before execute the project to have the following dependencies installed:
+Ensure before executing the project to have the following dependencies installed:
 
 - Python 3.8+
 - Make
@@ -12,7 +12,7 @@ Ensure before execute the project to have the following dependencies installed:
 - Python venv
 - Docker (PostgreSQL with PostGIS extension)
 
-> **Note**: For debian users you can install the dependencies by running the following command:
+> **Note**: For Debian users you can install the dependencies by running the following command:
 >
 > ```bash
 > sudo apt-get install python3 python3-pip python3-venv make binutils libproj-dev gdal-bin libgdal-dev docker.io docker-compose-v2 -y
@@ -67,7 +67,7 @@ make test
 ```
 
 5. Clean Up
-To clean up the project (remove the virtual environment), run:
+To clean up the project (remove the virtual environment), run the following:
 
 ```bash
 make clean
