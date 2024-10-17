@@ -5,7 +5,7 @@ DJANGO_MANAGE = $(PYTHON) manage.py
 
 # Create virtual environment and install dependencies
 install:
-	sudo apt-get install binutils libproj-dev gdal-bin libgdal-dev
+	sudo apt-get install binutils libproj-dev gdal-bin libgdal-dev -y
 	python3 -m venv $(ENV)
 	$(PIP) install -r requirements.txt
 

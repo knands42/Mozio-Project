@@ -5,6 +5,7 @@ This is a Django application for Mozio with geolocation capabilities, using Post
 ## Requirements
 
 - Python 3.8+
+- Make
 - Docker (PostgreSQL with PostGIS extension)
 
 ### Dependencies
@@ -14,7 +15,9 @@ make docker-up
 ```
 
 # Project Setup
+
 1. Clone the repository
+
 ```bash
 git clone https://github.com/your-repo/Mozio-Project.git
 cd Mozio-Project
