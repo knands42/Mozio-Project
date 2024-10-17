@@ -179,8 +179,7 @@ class ServiceAPITests(APITestCase):
         # Check that the response data matches the input data
         self.assertEqual(response.data['name'], service_area_create_payload_example['name'])
         self.assertEqual(response.data['price'], service_area_create_payload_example['price'])
-        
-
+    
         # Check if the service was created in the database
         service = ServiceArea.objects.get(name=service_area_create_payload_example['name'])
         self.assertIsNotNone(service)

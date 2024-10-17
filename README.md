@@ -12,7 +12,8 @@ Ensure before executing the project to have the following dependencies installed
 - Python venv
 - Docker (PostgreSQL with PostGIS extension)
 
-> **Note**: For Debian users you can install the dependencies by running the following command:
+> **Note**: It's also needed to setup the OS to be able to handle geolocalization features.
+> For Debian users you can install the dependencies by running the following command:
 >
 > ```bash
 > sudo apt-get install python3 python3-pip python3-venv make binutils libproj-dev gdal-bin libgdal-dev docker.io docker-compose-v2 -y
@@ -40,14 +41,12 @@ pip3 install -r requirements.txt
 You can set up the app by running the following Makefile commands:
 
 ```bash
-# Create a virtual environment, install dependencies, and set up the database
 make setup
 ```
 
 > This will:
 >
-> Create a virtual environment in the env directory.
-> Install all necessary Python dependencies from requirements.txt.
+> Boot the database.
 > Apply database migrations.
 
 3. Run the development server
@@ -56,7 +55,7 @@ Start the Django development server:
 
 ```bash
 make run
-Visit the app at http://127.0.0.1:8000.
+# Swagger available at the app at http://127.0.0.1:8000/swagger.
 ```
 
 4. Run Tests
