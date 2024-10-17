@@ -7,7 +7,7 @@ from .serializers import ProviderSerializer, ServiceAreaSerializer
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
 from rest_framework.pagination import PageNumberPagination
-
+from .doc_payloads import service_area_create_payload_example, service_area_update_payload_example, provider_create_payload_example
 
 class StandardResultsSetPagination(PageNumberPagination):
     page_size = 10
@@ -68,13 +68,7 @@ class ProviderViewSet(viewsets.ModelViewSet):
                 ),
             },
             required=['currency', 'name', 'email', 'phone_number', 'language'],
-            example={
-                'currency': 'USD',
-                'name': 'John Doe',
-                'email': 'user@example.com',
-                'phone_number': '999834414',
-                'language': 'en'
-            }
+            example=provider_create_payload_example
         ),
         responses={
             201: ProviderSerializer,
@@ -125,37 +119,7 @@ class ServiceAreaViewSet(viewsets.ModelViewSet):
                     description='Coordinates of the polygon defining the service area, the longitude and latitude of each point respectively'
                 ),
             },
-            example={
-                "provider": "03443be0-971f-4ab6-8823-aefc199b3cdf",
-                "name": "Curitiba",
-                "price": 10000,
-                "area": [
-                    [
-                        -49.2267109367212,
-                        -25.35657119275144
-                    ],
-                    [
-                        -49.17040040142484,
-                        -25.406785492872817
-                    ],
-                    [
-                        -49.20989090669761,
-                        -25.495930406827767
-                    ],
-                    [
-                        -49.328728075342525,
-                        -25.477776612809436
-                    ],
-                    [
-                        -49.31410196227854,
-                        -25.37738623217101
-                    ],
-                    [
-                        -49.2267109367212,
-                        -25.35657119275144
-                    ]
-                ]
-            }
+            example=service_area_create_payload_example
         )
     )
     def create(self, request, *args, **kwargs):
@@ -203,37 +167,7 @@ class ServiceAreaViewSet(viewsets.ModelViewSet):
                     description='Coordinates of the polygon defining the service area, the longitude and latitude of each point respectively'
                 ),
             },
-            example={
-                "provider": "03443be0-971f-4ab6-8823-aefc199b3cdf",
-                "name": "Curitiba - Updated",
-                "price": 10000,
-                "area": [
-                    [
-                        -49.2267109367212,
-                        -25.35657119275144
-                    ],
-                    [
-                        -49.17040040142484,
-                        -25.406785492872817
-                    ],
-                    [
-                        -49.20989090669761,
-                        -25.495930406827767
-                    ],
-                    [
-                        -49.328728075342525,
-                        -25.477776612809436
-                    ],
-                    [
-                        -49.31410196227854,
-                        -25.37738623217101
-                    ],
-                    [
-                        -49.2267109367212,
-                        -25.35657119275144
-                    ]
-                ]
-            }
+            example=service_area_update_payload_example
         )
     )
     def update(self, request, *args, **kwargs):
@@ -264,6 +198,7 @@ class ServiceAreaViewSet(viewsets.ModelViewSet):
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 
 class LocateAreaViewSet(APIView):
     
