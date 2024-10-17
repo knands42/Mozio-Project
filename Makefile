@@ -9,7 +9,6 @@ docker-up:
 
 # Apply database migrations
 migrate:
-	$(DJANGO_MANAGE) makemigrations
 	$(DJANGO_MANAGE) migrate
 
 # Run the Django development server
@@ -24,8 +23,13 @@ test:
 clean:
 	rm -rf $(ENV)
 
+# Build for production
+build-prod:
+	docker build -t geobound .
+	docker run -e DB_HOST=host.docker.internal -p 8000:8000 geobound
+
 # Set up the application (install, migrate, seed)
-setup: docker-up migrate seed
+setup: docker-up migrate
 
 # Run server and watch the logs
 run_with_logs:
