@@ -4,9 +4,19 @@ This is a Django application for Mozio with geolocation capabilities, using Post
 
 ## Requirements
 
+Ensure before execute the project to have the following dependencies installed:
+
 - Python 3.8+
 - Make
+- Python-pip
+- Python venv
 - Docker (PostgreSQL with PostGIS extension)
+
+> **Note**: For debian users you can install the dependencies by running the following command:
+>
+> ```bash
+> sudo apt-get install python3 python3-pip python3-venv make binutils libproj-dev gdal-bin libgdal-dev docker.io docker-compose-v2 -y
+> ```
 
 ### Dependencies
 
@@ -21,6 +31,9 @@ make docker-up
 ```bash
 git clone https://github.com/your-repo/Mozio-Project.git
 cd Mozio-Project
+python3 -m venv env
+source env/bin/activate
+pip3 install -r requirements.txt
 ```
 
 2. Set up the application
